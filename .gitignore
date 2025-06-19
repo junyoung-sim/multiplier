@@ -1,0 +1,6 @@
+test/coverage_report
+test/sim_build
+test/cm.log
+test/results.xml
+test/ucli.key
+test/waves.vcd

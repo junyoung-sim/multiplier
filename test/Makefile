@@ -4,9 +4,9 @@ SIM := vcs
 PWD=$(shell pwd)
 export PYTHONPATH := $(PWD):$(PYTHONPATH)
 
-VERILOG_SOURCES=$(INT8_MUL_PATH)/hw/*.v
+VERILOG_SOURCES=$(MULTIPLIER_PATH)/hw/*.v
 
-COMPILE_ARGS += +incdir+$(INT8_MUL_PATH)/hw
+COMPILE_ARGS += +incdir+$(MULTIPLIER_PATH)/hw
 COMPILE_ARGS += -sverilog
 
 WAVES=1
