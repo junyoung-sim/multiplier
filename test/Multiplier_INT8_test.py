@@ -90,7 +90,7 @@ async def test_case_2_directed_istream(dut):
   clock = init_clock(dut)
 
   for sel in [0, 1, 2, 3, 4, 5, 6]:
-    N = 1000
+    N = 10000
 
     a = []
     b = []
@@ -134,7 +134,7 @@ async def test_case_3_random_istream(dut):
   clock = init_clock(dut)
 
   for sel in [0, 1, 2, 3, 4, 5, 6]:
-    N = 1000
+    N = 10000
 
     a = []
     b = []
