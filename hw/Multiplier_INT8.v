@@ -4,16 +4,15 @@
 `include "Reg.v"
 `include "PPG.v"
 `include "Adder.v"
-`include "INT16_8.v"
 
 module Multiplier_INT8
 (
-  input  logic              clk,
-  input  logic              rst,
-  input  logic              en0,
-  input  logic signed [7:0] in0,
-  input  logic signed [7:0] in1,
-  output logic signed [7:0] out
+  input  logic               clk,
+  input  logic               rst,
+  input  logic               en0,
+  input  logic signed [7:0]  in0,
+  input  logic signed [7:0]  in1,
+  output logic signed [15:0] out
 );
 
   genvar i;
@@ -124,11 +123,7 @@ module Multiplier_INT8
   `ACC(g_s1_adder, 4, s0[1], g_s1_reg, clk, rst, en[3], s1)
   `ACC(g_s2_adder, 2, s1[1], g_s2_reg, clk, rst, en[4], s2)
 
-  INT16_8 int16_8
-  (
-    .int16 (s2[1][0]),
-    .int8  (out)
-  );
+  assign out = s2[1][0];
 
 endmodule
 

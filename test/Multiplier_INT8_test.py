@@ -26,8 +26,7 @@ def rand_8b_large_pos():
 def rand_8b_large_neg():
   return random.randint(INT_MIN, -32)
 
-def rand_8b():
-  sel = random.randint(0, 6)
+def rand_8b(sel):
   if(sel == 0):
     return rand_8b_full()
   elif(sel == 1):
@@ -43,18 +42,11 @@ def rand_8b():
   else:
     return rand_8b_large_neg()
 
-def saturate(x):
-  if(x > 127):
-    x = 127
-  if(x < -128):
-    x = -128
-  return x
-
-def signed(x):
+def signed(x, nbits):
   if(x >= 0):
     return x
   else:
-    return (x + (1 << 8))
+    return (x + (1 << nbits))
 
 #===========================================================
 
@@ -97,42 +89,43 @@ async def test_case_1_simple(dut):
 async def test_case_2_directed_istream(dut):
   clock = init_clock(dut)
 
-  N = 10000
+  for sel in [0, 1, 2, 3, 4, 5, 6]:
+    N = 1000
 
-  a = []
-  b = []
-  c = []
+    a = []
+    b = []
+    c = []
 
-  for t in range(N):
-    _a = rand_8b()
-    _b = rand_8b()
-    _c = saturate(_a * _b)
+    for t in range(N):
+      _a = rand_8b(sel)
+      _b = rand_8b(sel)
+      _c = (_a * _b)
 
-    a.append(signed(_a))
-    b.append(signed(_b))
-    c.append(signed(_c))
+      a.append(signed(_a, 8))
+      b.append(signed(_b, 8))
+      c.append(signed(_c, 16))
 
-  i = 0
-  j = 0
-  t = 0
+    i = 0
+    j = 0
+    t = 0
 
-  out = 0b00000000
+    out = 0b00000000
 
-  await reset(dut)
+    await reset(dut)
 
-  while(j < N):
-    await check (
-      dut, 0, (i < N), 
-      (a[i] if(i < N) else 0),
-      (b[i] if(i < N) else 0), out
-    )
-    
-    i += 1
-    t += 1
+    while(j < N):
+      await check (
+        dut, 0, (i < N), 
+        (a[i] if(i < N) else 0),
+        (b[i] if(i < N) else 0), out
+      )
+      
+      i += 1
+      t += 1
 
-    if(t >= 5):
-      out = c[j]
-      j += 1
+      if(t >= 5):
+        out = c[j]
+        j += 1
 
 #===========================================================
 
@@ -140,50 +133,51 @@ async def test_case_2_directed_istream(dut):
 async def test_case_3_random_istream(dut):
   clock = init_clock(dut)
 
-  N = 10000
+  for sel in [0, 1, 2, 3, 4, 5, 6]:
+    N = 1000
 
-  a = []
-  b = []
-  c = []
-  t = []
+    a = []
+    b = []
+    c = []
+    t = []
 
-  for i in range(N):
-    _a = rand_8b()
-    _b = rand_8b()
-    _c = saturate(_a * _b)
+    for i in range(N):
+      _a = rand_8b(sel)
+      _b = rand_8b(sel)
+      _c = (_a * _b)
 
-    a.append(signed(_a))
-    b.append(signed(_b))
-    c.append(signed(_c))
-    t.append(0)
-  
-  out = 0b00000000
-
-  i = 0
-  j = 0
-  k = 0
-
-  await reset(dut)
-
-  while(j < N):
-    en = ((i < N) & random.randint(0, 1))
-    await check (
-      dut, 0, en,
-      (a[i] if(en) else 0),
-      (b[i] if(en) else 0), out
-    )
+      a.append(signed(_a, 8))
+      b.append(signed(_b, 8))
+      c.append(signed(_c, 16))
+      t.append(0)
     
-    i += en
+    out = 0b00000000
 
-    for l in range(N):
-      t[l] += (t[l] > 0)
-    
-    if(k < N):
-      t[k] = en
-      k += en
+    i = 0
+    j = 0
+    k = 0
 
-    if(t[j] == 5):
-      out = c[j]
-      j += 1
+    await reset(dut)
+
+    while(j < N):
+      en = ((i < N) & random.randint(0, 1))
+      await check (
+        dut, 0, en,
+        (a[i] if(en) else 0),
+        (b[i] if(en) else 0), out
+      )
+      
+      i += en
+
+      for l in range(N):
+        t[l] += (t[l] > 0)
+      
+      if(k < N):
+        t[k] = en
+        k += en
+
+      if(t[j] == 5):
+        out = c[j]
+        j += 1
 
 #===========================================================
