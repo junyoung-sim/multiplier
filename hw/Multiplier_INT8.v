@@ -93,7 +93,7 @@ module Multiplier_INT8
   // Stage 2-4: Accumulation
   //==========================================================
 
-  `define ACC(ADD_ID, N, IN, REG_ID, CLK, RST, EN, OUT) \
+  `define ACC(CLK, RST, EN, N, IN, OUT, ADD_ID, REG_ID) \
     generate                                            \
       for(i = 0; i < N; i += 2) begin: ADD_ID           \
         Adder #(16) acc_adder                           \
@@ -119,9 +119,9 @@ module Multiplier_INT8
   logic signed [15:0] s1 [2][2];
   logic signed [15:0] s2 [2][1];
 
-  `ACC(g_s0_adder, 8, pp[1], g_s0_reg, clk, rst, en[2], s0)
-  `ACC(g_s1_adder, 4, s0[1], g_s1_reg, clk, rst, en[3], s1)
-  `ACC(g_s2_adder, 2, s1[1], g_s2_reg, clk, rst, en[4], s2)
+  `ACC(clk, rst, en[2], 8, pp[1], s0, g_s0_adder, g_s0_reg)
+  `ACC(clk, rst, en[3], 4, s0[1], s1, g_s1_adder, g_s1_reg)
+  `ACC(clk, rst, en[4], 2, s1[1], s2, g_s2_adder, g_s2_reg)
 
   assign out = s2[1][0];
 
