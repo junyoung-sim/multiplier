@@ -68,9 +68,9 @@ The waveform shows a random input stream test case.
 
 ## Physical Design
 
-***Technical details beyond what is provided below cannot be shared under the non-disclosure
+****Technical details beyond what is provided below cannot be shared under the non-disclosure
 agreement between Cornell Custom Silicon Systems, MPW (Multi-Project-Wafer) University
-Service (MUSE), and Taiwan Semiconductor Manufacturing Company (TSMC).***
+Service (MUSE), and Taiwan Semiconductor Manufacturing Company (TSMC).****
 
 The MUSE TSMC 180 nm process node was used to collect power, performance, and area
 metrics for the pipelined and combinational multipliers.
