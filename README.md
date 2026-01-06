@@ -1,7 +1,6 @@
-# Multiplier Design Comparative Analysis
-(Pipelined v. Combinational)
+# Multiplier Design Comparative Analysis (Pipelined v. Combinational)
 
-Summer 2025
+**Summer 2025**
 
 Designing a systolic array and TinyNPU taught me the importance of multiply-accumulate
 (MAC) processing elements in machine learning hardware. Thus, I designed a pipelined
