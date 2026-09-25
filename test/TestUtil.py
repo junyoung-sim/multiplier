@@ -2,7 +2,7 @@ import random
 import cocotb
 import subprocess
 
-from fixedpt import Fixed
+#from fixedpt import Fixed
 from cocotb.triggers import *
 from cocotb.clock import Clock
 
