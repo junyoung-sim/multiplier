@@ -1,58 +1,62 @@
 from TestUtil import *
 
-#===========================================================
+#======================================================================
 
 NBITS = 8
 
-#===========================================================
+#======================================================================
 
-async def check(dut, a, b, out: []):
-  dut.a.value = a
-  dut.b.value = b
+async def check(dut, in0, in1, prod_0, prod_i: [], prod_N):
+  dut.in0.value = in0
+  dut.in1.value = in1
 
   await Timer(1, units="ns")
 
-  for i in range(NBITS):
-    assert (dut.out[i].value == out[i]),           \
-      "[FAILED] dut.out[{}] != out[{}] ({} != {})" \
-      .format(i, i, dut.out[i].value, bin(out[i]))
+  assert (dut.prod_0.value == prod_0),         \
+    "[FAILED] dut.prod_0 != prod_0 ({} != {})" \
+    .format(dut.prod_0.value, bin(prod_0))
 
-#===========================================================
+  for i in range(1, NBITS-1, 1):
+    assert (dut.prod_i[i-1].value == prod_i[i-1]),           \
+      "[FAILED] dut.prod_i[{}] != prod_i[{}] ({} != {})"     \
+      .format(i-1, i-1, dut.prod_i[i-1].value, bin(prod_i[i-1]))
+    
+  assert (dut.prod_N.value == prod_N),         \
+    "[FAILED] dut.prod_N != prod_N ({} != {})" \
+    .format(dut.prod_N.value, bin(prod_N))
+
+#======================================================================
 
 @cocotb.test()
 async def test_case_1_simple_zeros(dut):
-  a   = 0b00000000
-  b   = 0b00000000
+  in0 = 0b00000000
+  in1 = 0b00000000
   out = [
-    0b0000000110000000,
-    0b0000000100000000,
-    0b0000001000000000,
-    0b0000010000000000,
-    0b0000100000000000,
-    0b0001000000000000,
-    0b0010000000000000,
-    0b1011111110000000
+    0b110000000,
+    0b10000000,
+    0b10000000,
+    0b10000000,
+    0b10000000,
+    0b10000000,
+    0b10000000,
+    0b101111111
   ]
+  await check(dut, in0, in1, out[0], out[1:NBITS-1], out[NBITS-1])
 
-  await check(dut, a, b, out)
-
-#===========================================================
+#======================================================================
 
 @cocotb.test()
 async def test_case_2_simple_ones(dut):
-  a   = 0b11111111
-  b   = 0b11111111
+  in0 = 0b11111111
+  in1 = 0b11111111
   out = [
-    0b0000000101111111,
-    0b0000000011111110,
-    0b0000000111111100,
-    0b0000001111111000,
-    0b0000011111110000,
-    0b0000111111100000,
-    0b0001111111000000,
-    0b1100000000000000
+    0b101111111,
+    0b01111111,
+    0b01111111,
+    0b01111111,
+    0b01111111,
+    0b01111111,
+    0b01111111,
+    0b110000000
   ]
-
-  await check(dut, a, b, out)
-
-#===========================================================
+  await check(dut, in0, in1, out[0], out[1:NBITS-1], out[NBITS-1])
