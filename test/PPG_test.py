@@ -17,8 +17,8 @@ async def check(dut, in0, in1, prod_0, prod_i: [], prod_N):
     .format(dut.prod_0.value, bin(prod_0))
 
   for i in range(1, NBITS-1, 1):
-    assert (dut.prod_i[i-1].value == prod_i[i-1]),           \
-      "[FAILED] dut.prod_i[{}] != prod_i[{}] ({} != {})"     \
+    assert (dut.prod_i[i-1].value == prod_i[i-1]),               \
+      "[FAILED] dut.prod_i[{}] != prod_i[{}] ({} != {})"         \
       .format(i-1, i-1, dut.prod_i[i-1].value, bin(prod_i[i-1]))
     
   assert (dut.prod_N.value == prod_N),         \

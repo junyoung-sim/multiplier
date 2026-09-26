@@ -42,41 +42,68 @@ module Multiplier_INT8
   // Stage 0: Input
   //==========================================================
 
-  logic signed [7:0] a;
-  logic signed [7:0] b;
+  logic signed [7:0] _in0;
+  logic signed [7:0] _in1;
 
-  Reg #(8) a_reg
+  Reg #(8) in0_reg
   (
     .clk (clk),
     .rst (rst),
     .en  (en[0]),
     .d   (in0),
-    .q   (a)
+    .q   (_in0)
   );
 
-  Reg #(8) b_reg
+  Reg #(8) in1_reg
   (
     .clk (clk),
     .rst (rst),
     .en  (en[0]),
     .d   (in1),
-    .q   (b)
+    .q   (_in1)
   );
 
   //==========================================================
   // Stage 1: Partial Product Generation
   //==========================================================
 
-  logic signed [15:0] pp [2][8];
+  //logic signed [15:0] pp [2][8];
+
+  logic signed [8:0] prod_0 [2];
+  logic signed [7:0] prod_i [2][6];
+  logic signed [8:0] prod_7 [2];
 
   PPG #(8) ppg
   (
-    .a   (a),
-    .b   (b),
-    .out (pp[0])
+    .in0    (_in0),
+    .in1    (_in1),
+    .prod_0 (prod_0[0]),
+    .prod_i (prod_i[0]),
+    .prod_N (prod_7[0])
   );
 
-  generate
+  `define PP_REG(NBITS, IN, OUT, REG_ID) \
+    generate                             \
+      Reg #(NBITS) pp_reg                \
+      (                                  \
+        .clk (clk),                      \
+        .rst (rst),                      \
+        .en  (en[1]),                    \
+        .in  (IN),                       \
+        .out (OUT)                       \
+      );                                 \
+    endgenerate
+  
+  PP_REG(9, prod_0[0],    prod_0[1],    g_prod_0_reg);
+  PP_REG(8, prod_i[0][0], prod_i[1][0], g_prod_1_reg); // (<< 1)
+  PP_REG(8, prod_i[0][1], prod_i[1][1], g_prod_2_reg); // (<< 2)
+  PP_REG(8, prod_i[0][2], prod_i[1][2], g_prod_3_reg); // (<< 3)
+  PP_REG(8, prod_i[0][3], prod_i[1][3], g_prod_4_reg); // (<< 4)
+  PP_REG(8, prod_i[0][4], prod_i[1][4], g_prod_5_reg); // (<< 5)
+  PP_REG(8, prod_i[0][5], prod_i[1][5], g_prod_6_reg); // (<< 6)
+  PP_REG(9, prod_7[0],    prod_7[1],    g_prod_7_reg); // (<< 7)
+
+  /*generate
     for(i = 0; i < 8; i++) begin: g_pp_reg
       Reg #(16) pp_reg
       (
@@ -87,7 +114,7 @@ module Multiplier_INT8
         .q   (pp[1][i])
       );
     end
-  endgenerate
+  endgenerate*/
 
   //==========================================================
   // Stage 2-4: Accumulation
